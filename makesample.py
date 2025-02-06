@@ -82,3 +82,57 @@ for i in range(3):
 ax[-1].set_xlabel("Time [s]")
 plt.suptitle("Wrist Trajectory Comparison: Measured vs Minimum Torque Model")
 plt.show()
+
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# 2関節モデルのパラメータ（仮定）
+L1 = 0.5  # 上腕の長さ [m]
+L2 = 0.5  # 前腕の長さ [m]
+
+# 時間データ
+time = np.linspace(0, 1, 1000)  # 1秒間の軌道、1000ポイント
+
+# 最小トルクモデルによる関節角度の計算
+def min_torque_trajectory(t, theta_start, theta_end):
+    tau = t
+    return theta_start + (theta_end - theta_start) * (6*tau**5 - 15*tau**4 + 10*tau**3)
+
+# 肩と肘の初期・最終角度（仮定）
+theta1_start = 0  # 肩の初期角度 [rad]
+theta1_end = np.pi / 4  # 肩の最終角度 [rad]
+theta2_start = 0  # 肘の初期角度 [rad]
+theta2_end = np.pi / 4  # 肘の最終角度 [rad]
+
+# 肩と肘の理想的な軌道
+theta1_trajectory = min_torque_trajectory(time, theta1_start, theta1_end)
+theta2_trajectory = min_torque_trajectory(time, theta2_start, theta2_end)
+
+# 手首の位置（順運動学）
+x_wrist = L1 * np.cos(theta1_trajectory) + L2 * np.cos(theta1_trajectory + theta2_trajectory)
+y_wrist = L1 * np.sin(theta1_trajectory) + L2 * np.sin(theta1_trajectory + theta2_trajectory)
+
+# プロット
+plt.figure(figsize=(10, 8))
+
+# 手首のX-Y軌道
+plt.subplot(2, 1, 1)
+plt.plot(x_wrist, y_wrist, label="Ideal Wrist Trajectory", color="red")
+plt.title("Ideal Wrist Trajectory (2-Joint Model)")
+plt.xlabel("X [m]")
+plt.ylabel("Y [m]")
+plt.legend()
+
+# 各関節角度の推移
+plt.subplot(2, 1, 2)
+plt.plot(time, theta1_trajectory, label="Shoulder Angle (θ1)", color="blue")
+plt.plot(time, theta2_trajectory, label="Elbow Angle (θ2)", color="green")
+plt.title("Joint Angles (2-Joint Model)")
+plt.xlabel("Time [s]")
+plt.ylabel("Angle [rad]")
+plt.legend()
+
+plt.tight_layout()
+plt.show()
