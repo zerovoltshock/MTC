@@ -37,3 +37,48 @@ csv_filename = "reaching_trajectory.csv"
 df.to_csv(csv_filename, index=False)
 
 print(f"サンプルデータを {csv_filename} に保存しました。")
+
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.optimize import minimize
+
+# CSVデータの読み込み
+csv_filename = "reaching_trajectory.csv"
+df = pd.read_csv(csv_filename)
+
+# 時間データ
+time = df["time"].values
+
+# 測定された手首の軌道
+wrist_measured = df[["wrist_x", "wrist_y", "wrist_z"]].values
+
+# --- 最小トルクモデルによる理想軌道の生成 ---
+# 最小トルク軌道を求めるための関数
+def min_torque_trajectory(t, start, end):
+    T = t[-1]
+    tau = t / T
+    position = start + (end - start) * (6*tau**5 - 15*tau**4 + 10*tau**3)
+    return position
+
+# 手首の開始・終了位置
+wrist_start = wrist_measured[0]
+wrist_end = wrist_measured[-1]
+
+# 最小トルク軌道の計算
+wrist_mtm = np.array([min_torque_trajectory(time, wrist_start[i], wrist_end[i]) for i in range(3)]).T
+
+# --- プロットによる比較 ---
+fig, ax = plt.subplots(3, 1, figsize=(10, 8), sharex=True)
+
+labels = ['X', 'Y', 'Z']
+for i in range(3):
+    ax[i].plot(time, wrist_measured[:, i], label="Measured", linestyle="dashed", color="blue")
+    ax[i].plot(time, wrist_mtm[:, i], label="Minimum Torque Model", color="red")
+    ax[i].set_ylabel(f"Position ({labels[i]}) [m]")
+    ax[i].legend()
+
+ax[-1].set_xlabel("Time [s]")
+plt.suptitle("Wrist Trajectory Comparison: Measured vs Minimum Torque Model")
+plt.show()
