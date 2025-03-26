@@ -38,5 +38,13 @@ conda install scipy scikit-learn scikit-learn-intelex jupyter jupyterlab noteboo
 | –config-settings=cmake.define.BOOST_ROOT=”C:/local/boost_1_85_0″                       | CMakeに対して、Boostライブラリのルートディレクトリを指定                                                 | 
 | –config-settings=cmake.define.BOOST_LIBRARYDIR=”C:/local/boost_1_85_0/lib64-msvc-14.3″ | CMakeに対して、Boostライブラリのバイナリファイル（.libや.dll）のディレクトリを指定                       | 
 
+- Accelerometer-Based Identification of Fatigue in the Lower
+Limbs during Cyclical Physical Exercise: A Systematic Review
+- Quantitative assessment of upper limb muscle fatigue depending on the conditions of repetitive task load
+- Heart Rate Variability-Based Subjective Physical
+Fatigue Assessment
+-Quantitative and non-invasive measurement of exercise-induced fatigue
+-Non-Invasive Quantitative Muscle Fatigue Estimation Based on Correlation Between sEMG Signal and Muscle Mass
+-
 
 
